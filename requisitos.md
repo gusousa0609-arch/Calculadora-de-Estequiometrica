@@ -1,7 +1,8 @@
 # Calculadora-de-Estequiometrica
 
 ## Objetivos
-
+- criar um site onde vai aparecer as formulas químicas para fazer os cálculos de estequiométricos, quero também uma tabela periódica para consulta dentro do site para a pessoa clicar e já selecionar as informações do elemento.
+- quero que toda a explicação dos cálculos estequiométricos de forma objetiva e uma explicação para crianças de até 11 anos
 
 ### Stack Tecnlógico
 - Backend: PHP estruturado com sessões nativas
@@ -12,6 +13,7 @@
 Tratar senhas de usuários com hash bcript
 O sistema deve ter uma página de históricos e manter sempre os logs de qualquer alteração feita por 
 qualquer usuário, para auditorias futuras.
+
 
 
 
