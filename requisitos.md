@@ -13,6 +13,11 @@
 Tratar senhas de usuários com hash bcript
 O sistema deve ter uma página de históricos e manter sempre os logs de qualquer alteração feita por 
 qualquer usuário, para auditorias futuras.
+Uma calculadora voltada para pessoas da área da química para facilitar processos estequiométricos e outras contas.  
+pode ser usado sem cadastro, mas caso quisesse ver histórico precisaria ser cadastrado.
+a aba principal seria uma caixa de texto para adicionar a fórmula com as informações que se tem e um botão do lado para calcular.
+ao ser calculado aparecia as informações restantes, que podem ser como balanceamento, número de mols, volume, massa, número de partículas, titulação e concentração.  
+teria na parte superior do site 
 
 
 
