@@ -16,8 +16,13 @@ qualquer usuário, para auditorias futuras.
 Uma calculadora voltada para pessoas da área da química para facilitar processos estequiométricos e outras contas.  
 pode ser usado sem cadastro, mas caso quisesse ver histórico precisaria ser cadastrado.
 a aba principal seria uma caixa de texto para adicionar a fórmula com as informações que se tem e um botão do lado para calcular.
-ao ser calculado aparecia as informações restantes, que podem ser como balanceamento, número de mols, volume, massa, número de partículas, titulação e concentração.  
-teria na parte superior do site 
+ao ser calculado aparecia as informações restantes, que podem ser como balanceamento, número de mols, volume, massa, número de partículas, titulação, concentração e nox. 
+a baixo do resultado explicaria como foi feito o cálculo.
+teria na parte superior do site teria uma opção que poderia acessar a tabela periódica, onde ao clicar em um elemento daria informações sobre ele. 
+as informações e fórmulas usadas seria retirado da internet, e no roda pé do site apareceria os links usados 
+o site teria uma linguagem fácil.
+o mesmo email não pode ter mais de uma conta.
+
 
 
 
