@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Estequiométrica & Tabela Periódica - EstequioLab (Modo Standalone / Demo)</title>
+    <!-- Tailwind CSS v3 CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        chem: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            800: '#0c4a6e',
+                            900: '#082f49',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-full flex flex-col antialiased">
+
+<!-- Banner de Demonstração / Standalone -->
+<div class="bg-gradient-to-r from-sky-700 to-indigo-800 text-white text-xs px-4 py-2 flex items-center justify-between">
+    <div class="flex items-center space-x-2">
+        <i class="fas fa-info-circle text-sky-300"></i>
+        <span><strong>Versão Visual / Pré-visualização Rápida:</strong> Todos os motores químicos, balanceamento e a tabela periódica rodam direto no navegador!</span>
+    </div>
+    <span class="hidden sm:inline bg-white/20 px-2 py-0.5 rounded-full text-[11px] font-bold">100% Funcional</span>
+</div>
+
+<!-- Header Responsivo Mobile-First -->
+<header class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 sticky top-0 z-40 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            
+            <!-- Logo e Título -->
+            <a href="demo.html" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-sky-500/20 group-hover:scale-105 transition-transform">
+                    <i class="fas fa-atom text-xl animate-spin-slow"></i>
+                </div>
+                <div>
+                    <span class="font-extrabold text-lg sm:text-xl tracking-tight text-slate-900 dark:text-white block leading-tight">
+                        Estequio<span class="text-sky-600 dark:text-sky-400">Lab</span>
+                    </span>
+                    <span class="text-[10px] text-slate-400 font-medium tracking-wider uppercase block">Cálculos & Tabela Periódica</span>
+                </div>
+            </a>
+
+            <!-- Menu Desktop -->
+            <nav class="hidden md:flex items-center space-x-1 lg:space-x-2">
+                <button type="button" class="nav-view-btn px-3 py-2 rounded-xl text-sm font-semibold transition bg-sky-50 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300" data-view="view-calc">
+                    <i class="fas fa-calculator mr-1.5 opacity-80"></i> Calculadora
+                </button>
+                <button type="button" class="nav-view-btn px-3 py-2 rounded-xl text-sm font-semibold transition text-slate-600 hover:text-sky-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700/50" data-view="view-tabela">
+                    <i class="fas fa-th mr-1.5 opacity-80"></i> Tabela Periódica
+                </button>
+                <button type="button" class="nav-view-btn px-3 py-2 rounded-xl text-sm font-semibold transition text-slate-600 hover:text-sky-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700/50" data-view="view-historico">
+                    <i class="fas fa-history mr-1.5 opacity-80"></i> Histórico
+                </button>
+                <button type="button" class="nav-view-btn px-3 py-2 rounded-xl text-sm font-semibold transition text-slate-600 hover:text-sky-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700/50" data-view="view-auditoria">
+                    <i class="fas fa-shield-alt mr-1.5 opacity-80"></i> Auditoria / Logs
+                </button>
+            </nav>
+
+            <!-- Ações: Dark Mode e Perfil Simulado -->
+            <div class="hidden md:flex items-center space-x-3">
+                <button id="theme-toggle" type="button" class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition" title="Alternar Modo Escuro">
+                    <i class="fas fa-moon dark:hidden"></i>
+                    <i class="fas fa-sun hidden dark:inline"></i>
+                </button>
+                <div class="flex items-center space-x-2 pl-2 border-l border-slate-200 dark:border-slate-700">
+                    <div class="w-8 h-8 rounded-full bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-200 flex items-center justify-center font-bold text-xs">
+                        GS
+                    </div>
+                    <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">
+                        Gustavo Sousa
+                    </span>
+                </div>
+            </div>
+
+            <!-- Botão Menu Mobile -->
+            <div class="flex items-center space-x-2 md:hidden">
+                <button id="theme-toggle-mobile" type="button" class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                    <i class="fas fa-moon dark:hidden"></i>
+                    <i class="fas fa-sun hidden dark:inline"></i>
+                </button>
+                <button id="mobile-menu-btn" type="button" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Mobile Dropdown -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 pt-3 pb-5 space-y-2">
+        <button type="button" class="nav-view-btn w-full text-left px-3 py-2.5 rounded-xl text-base font-medium bg-sky-50 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300" data-view="view-calc">
+            <i class="fas fa-calculator mr-2"></i> Calculadora
+        </button>
+        <button type="button" class="nav-view-btn w-full text-left px-3 py-2.5 rounded-xl text-base font-medium text-slate-600 dark:text-slate-300" data-view="view-tabela">
+            <i class="fas fa-th mr-2"></i> Tabela Periódica
+        </button>
+        <button type="button" class="nav-view-btn w-full text-left px-3 py-2.5 rounded-xl text-base font-medium text-slate-600 dark:text-slate-300" data-view="view-historico">
+            <i class="fas fa-history mr-2"></i> Histórico
+        </button>
+        <button type="button" class="nav-view-btn w-full text-left px-3 py-2.5 rounded-xl text-base font-medium text-slate-600 dark:text-slate-300" data-view="view-auditoria">
+            <i class="fas fa-shield-alt mr-2"></i> Auditoria / Logs
+        </button>
+    </div>
+</header>
+
+<!-- ================= VIEW 1: CALCULADORA ================= -->
+<main id="view-calc" class="app-view flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+
+    <!-- Hero / Apresentação -->
+    <div class="mb-8 text-center max-w-3xl mx-auto">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 text-sky-800 dark:bg-sky-900/60 dark:text-sky-300 mb-3">
+            <i class="fas fa-flask mr-1.5"></i> Química Descomplicada & Precisa
+        </span>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
+            Cálculos Estequiométricos Inteligentes
+        </h1>
+        <p class="mt-2 text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
+            Balanceie reações químicas, calcule mols, massa, volume nas CNTP, número de partículas, Nox, titulação e concentração molar com explicações detalhadas tanto para estudantes quanto para crianças!
+        </p>
+    </div>
+
+    <!-- Abas de Cálculos -->
+    <div class="flex items-center justify-center mb-6">
+        <div class="inline-flex p-1 space-x-1 bg-slate-200/80 dark:bg-slate-800 rounded-2xl overflow-x-auto max-w-full">
+            <button type="button" class="calc-tab-btn active px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-white dark:bg-slate-700 text-sky-600 dark:text-sky-300 shadow-sm" data-tab="tab-estequio">
+                <i class="fas fa-balance-scale mr-1.5"></i> Estequiometria
+            </button>
+            <button type="button" class="calc-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition text-slate-600 dark:text-slate-300 hover:text-sky-600" data-tab="tab-massa-nox">
+                <i class="fas fa-weight-hanging mr-1.5"></i> Massa & Nox
+            </button>
+            <button type="button" class="calc-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition text-slate-600 dark:text-slate-300 hover:text-sky-600" data-tab="tab-titulacao">
+                <i class="fas fa-vial mr-1.5"></i> Titulação
+            </button>
+            <button type="button" class="calc-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition text-slate-600 dark:text-slate-300 hover:text-sky-600" data-tab="tab-concentracao">
+                <i class="fas fa-tint mr-1.5"></i> Concentração
+            </button>
+        </div>
+    </div>
+
+    <!-- Card Principal de Entrada -->
+    <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-200/80 dark:border-slate-700/80 p-5 sm:p-8 mb-8">
+        
+        <!-- ABA 1: Estequiometria -->
+        <div id="tab-estequio" class="calc-tab-content">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center">
+                        <i class="fas fa-atom text-sky-600 mr-2"></i> Reação Química & Proporções
+                    </h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Digite reagentes e produtos. O balanceamento e as proporções molares serão calculados automaticamente.</p>
+                </div>
+                <button type="button" class="btn-goto-tabela inline-flex items-center text-xs font-semibold text-sky-600 dark:text-sky-400 hover:underline">
+                    <i class="fas fa-th mr-1"></i> Consultar Tabela Periódica
+                </button>
+            </div>
+
+            <!-- Exemplos rápidos -->
+            <div class="mb-4 flex flex-wrap items-center gap-1.5 text-xs">
+                <span class="text-slate-400 font-medium">Exemplos rápidos:</span>
+                <button type="button" class="quick-sample px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-sky-50 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition" data-eq="H2 + O2 -> H2O">H₂ + O₂ → H₂O</button>
+                <button type="button" class="quick-sample px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-sky-50 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition" data-eq="CH4 + O2 -> CO2 + H2O">CH₄ + O₂ → CO₂ + H₂O</button>
+                <button type="button" class="quick-sample px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-sky-50 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition" data-eq="Fe + O2 -> Fe2O3">Fe + O₂ → Fe₂O₃</button>
+                <button type="button" class="quick-sample px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-sky-50 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition" data-eq="N2 + H2 -> NH3">N₂ + H₂ → NH₃</button>
+                <button type="button" class="quick-sample px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-sky-50 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition" data-eq="Al + HCl -> AlCl3 + H2">Al + HCl → AlCl₃ + H₂</button>
+            </div>
+
+            <!-- Caixa de Texto + Botão Calcular -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 mb-4">
+                <div class="lg:col-span-8">
+                    <label for="formula-input" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                        Equação da Reação Química
+                    </label>
+                    <div class="relative formula-drop-zone rounded-2xl">
+                        <input type="text" id="formula-input" placeholder="Ex: H2 + O2 -> H2O ou NaOH + HCl -> NaCl + H2O" 
+                               value="CH4 + O2 -> CO2 + H2O"
+                               class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white font-mono text-base focus:ring-2 focus:ring-sky-500 focus:outline-none transition">
+                        <button type="button" id="btn-clear-formula" class="absolute right-3 top-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
+                            <i class="fas fa-times-circle"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-4 flex items-end">
+                    <button type="button" id="btn-calc-stoich" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-bold text-base shadow-lg shadow-sky-500/25 active:scale-[0.99] transition flex items-center justify-center space-x-2">
+                        <i class="fas fa-calculator text-lg"></i>
+                        <span>Calcular Estequiometria</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Teclado Químico (Subscritos, Sobrescritos e Elementos Rápidos) -->
+            <div class="chem-keyboard bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 mb-2">
+                <div class="flex flex-wrap items-center gap-1.5 mb-2">
+                    <span class="text-[10px] font-bold uppercase text-slate-400 tracking-wider w-full mb-0.5">Subscritos (quantidade de átomos)</span>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white font-mono text-sm hover:bg-sky-50 dark:hover:bg-sky-900/40 transition" data-char="₁">₁</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white font-mono text-sm hover:bg-sky-50 dark:hover:bg-sky-900/40 transition" data-char="₂">₂</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white font-mono text-sm hover:bg-sky-50 dark:hover:bg-sky-900/40 transition" data-char="₃">₃</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white font-mono text-sm hover:bg-sky-50 dark:hover:bg-sky-900/40 transition" data-char="₄">₄</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white font-mono text-sm hover:bg-sky-50 dark:hover:bg-sky-900/40 transition" data-char="₅">₅</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white font-mono text-sm hover:bg-sky-50 dark:hover:bg-sky-900/40 transition" data-char="₆">₆</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white font-mono text-sm hover:bg-sky-50 dark:hover:bg-sky-900/40 transition" data-char="₇">₇</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white font-mono text-sm hover:bg-sky-50 dark:hover:bg-sky-900/40 transition" data-char="₈">₈</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white font-mono text-sm hover:bg-sky-50 dark:hover:bg-sky-900/40 transition" data-char="₉">₉</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white font-mono text-sm hover:bg-sky-50 dark:hover:bg-sky-900/40 transition" data-char="₀">₀</button>
+                </div>
+                <div class="flex flex-wrap items-center gap-1.5 mb-2">
+                    <span class="text-[10px] font-bold uppercase text-slate-400 tracking-wider w-full mb-0.5">Sobrescritos (Nox / Carga)</span>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-mono text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition" data-char="¹">¹</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-mono text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition" data-char="²">²</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-mono text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition" data-char="³">³</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-mono text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition" data-char="⁴">⁴</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-mono text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition" data-char="⁵">⁵</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-mono text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition" data-char="⁶">⁶</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-mono text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition" data-char="⁷">⁷</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-mono text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition" data-char="⁸">⁸</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-mono text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition" data-char="⁹">⁹</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-emerald-400 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 font-mono font-bold text-sm hover:bg-emerald-50 transition" data-char="⁺">⁺</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-rose-400 dark:border-rose-700 text-rose-700 dark:text-rose-300 font-mono font-bold text-sm hover:bg-rose-50 transition" data-char="⁻">⁻</button>
+                </div>
+                <div class="flex flex-wrap items-center gap-1">
+                    <span class="text-[10px] font-bold uppercase text-slate-400 tracking-wider w-full mb-0.5">Elementos rápidos (clique ou arraste)</span>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="H" data-char="H">H</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="C" data-char="C">C</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="N" data-char="N">N</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="O" data-char="O">O</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="Na" data-char="Na">Na</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="Mg" data-char="Mg">Mg</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="Al" data-char="Al">Al</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="S" data-char="S">S</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="Cl" data-char="Cl">Cl</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="K" data-char="K">K</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="Ca" data-char="Ca">Ca</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="Fe" data-char="Fe">Fe</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="Cu" data-char="Cu">Cu</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="Zn" data-char="Zn">Zn</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="Br" data-char="Br">Br</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="Ag" data-char="Ag">Ag</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="Ba" data-char="Ba">Ba</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="Pb" data-char="Pb">Pb</button>
+                </div>
+            </div>
+
+            <!-- Informação fornecida -->
+            <div class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-700/60 mb-2">
+                <span class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                    <i class="fas fa-sliders-h mr-1 text-sky-500"></i> Informação Que Você Já Possui:
+                </span>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Substância Conhecida:</label>
+                        <select id="stoich-target-species" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-xs font-semibold text-slate-800 dark:text-white focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                            <option value="0">1ª Substância da Reação</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Grandeza Fornecida:</label>
+                        <select id="stoich-quantity-type" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-xs font-semibold text-slate-800 dark:text-white focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                            <option value="massa">Massa (gramas - g)</option>
+                            <option value="mols">Número de Mols (mol)</option>
+                            <option value="volume">Volume nas CNTP (Litros - L)</option>
+                            <option value="particulas">Número de Partículas / Moléculas</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Valor Numérico:</label>
+                        <input type="number" id="stoich-quantity-val" step="any" value="16" placeholder="Ex: 16"
+                               class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-xs font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 2: Massa Molar & Nox -->
+        <div id="tab-massa-nox" class="calc-tab-content hidden">
+            <div class="mb-4">
+                <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center">
+                    <i class="fas fa-weight-hanging text-indigo-600 mr-2"></i> Cálculo de Massa Molar & Nox
+                </h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Insira a fórmula de qualquer composto químico para obter massa molar, percentual mássico de cada elemento e números de oxidação (Nox).</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 mb-2">
+                <div class="lg:col-span-8">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                        Fórmula Molecular
+                    </label>
+                    <div class="formula-drop-zone rounded-2xl">
+                        <input type="text" id="massa-formula-input" placeholder="Ex: KMnO4, H2SO4, Ca(OH)2, Al2(SO4)3" value="KMnO4"
+                               class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white font-mono text-base focus:ring-2 focus:ring-sky-500 focus:outline-none transition">
+                    </div>
+                </div>
+                <div class="lg:col-span-4 flex items-end">
+                    <button type="button" id="btn-calc-massa-nox" class="w-full py-3.5 px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base shadow-lg shadow-indigo-500/25 transition flex items-center justify-center space-x-2">
+                        <i class="fas fa-search text-lg"></i>
+                        <span>Calcular Massa & Nox</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Teclado Químico para Massa & Nox -->
+            <div class="chem-keyboard bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 mb-2">
+                <div class="flex flex-wrap items-center gap-1.5 mb-2">
+                    <span class="text-[10px] font-bold uppercase text-slate-400 tracking-wider w-full mb-0.5">Subscritos (quantidade de átomos)</span>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white font-mono text-sm hover:bg-sky-50 dark:hover:bg-sky-900/40 transition" data-char="₁">₁</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white font-mono text-sm hover:bg-sky-50 dark:hover:bg-sky-900/40 transition" data-char="₂">₂</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white font-mono text-sm hover:bg-sky-50 dark:hover:bg-sky-900/40 transition" data-char="₃">₃</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white font-mono text-sm hover:bg-sky-50 dark:hover:bg-sky-900/40 transition" data-char="₄">₄</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white font-mono text-sm hover:bg-sky-50 dark:hover:bg-sky-900/40 transition" data-char="₅">₅</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white font-mono text-sm hover:bg-sky-50 dark:hover:bg-sky-900/40 transition" data-char="₆">₆</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white font-mono text-sm hover:bg-sky-50 dark:hover:bg-sky-900/40 transition" data-char="₇">₇</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white font-mono text-sm hover:bg-sky-50 dark:hover:bg-sky-900/40 transition" data-char="₈">₈</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white font-mono text-sm hover:bg-sky-50 dark:hover:bg-sky-900/40 transition" data-char="₉">₉</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white font-mono text-sm hover:bg-sky-50 dark:hover:bg-sky-900/40 transition" data-char="₀">₀</button>
+                </div>
+                <div class="flex flex-wrap items-center gap-1.5 mb-2">
+                    <span class="text-[10px] font-bold uppercase text-slate-400 tracking-wider w-full mb-0.5">Sobrescritos (Nox / Carga)</span>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-mono text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition" data-char="¹">¹</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-mono text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition" data-char="²">²</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-mono text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition" data-char="³">³</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-mono text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition" data-char="⁴">⁴</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-mono text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition" data-char="⁵">⁵</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-mono text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition" data-char="⁶">⁶</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-mono text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition" data-char="⁷">⁷</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-mono text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition" data-char="⁸">⁸</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-mono text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition" data-char="⁹">⁹</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-emerald-400 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 font-mono font-bold text-sm hover:bg-emerald-50 transition" data-char="⁺">⁺</button>
+                    <button type="button" class="chem-key-btn px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-rose-400 dark:border-rose-700 text-rose-700 dark:text-rose-300 font-mono font-bold text-sm hover:bg-rose-50 transition" data-char="⁻">⁻</button>
+                </div>
+                <div class="flex flex-wrap items-center gap-1">
+                    <span class="text-[10px] font-bold uppercase text-slate-400 tracking-wider w-full mb-0.5">Elementos rápidos</span>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="H" data-char="H">H</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="C" data-char="C">C</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="N" data-char="N">N</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="O" data-char="O">O</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="Na" data-char="Na">Na</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="S" data-char="S">S</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="Cl" data-char="Cl">Cl</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="K" data-char="K">K</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="Ca" data-char="Ca">Ca</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="Fe" data-char="Fe">Fe</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="Cu" data-char="Cu">Cu</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="Zn" data-char="Zn">Zn</button>
+                    <button type="button" class="draggable-elem chem-key-btn px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-900/40 border border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-200 font-mono text-xs font-bold hover:bg-sky-200 transition" data-elem="Mn" data-char="Mn">Mn</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 3: Titulação -->
+        <div id="tab-titulacao" class="calc-tab-content hidden">
+            <div class="mb-4">
+                <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center">
+                    <i class="fas fa-vial text-sky-600 mr-2"></i> Titulação Ácido-Base (Cₐ · Vₐ / a = C₆ · V₆ / b)
+                </h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Preencha três campos e deixe exatamente UM em branco para que o sistema descubra o valor restante automaticamente.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-2">
+                <div class="bg-rose-50/60 dark:bg-rose-950/20 p-4 rounded-2xl border border-rose-200 dark:border-rose-800">
+                    <h3 class="text-xs font-bold text-rose-700 dark:text-rose-300 uppercase tracking-wider mb-2">Ácido</h3>
+                    <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Concentração Cₐ (mol/L):</label>
+                    <input type="number" id="tit-ca" step="any" placeholder="Deixe vazio se for a incógnita" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-sm font-semibold mb-2">
+                    <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Volume Vₐ (mL ou L):</label>
+                    <input type="number" id="tit-va" step="any" value="25" placeholder="Ex: 25" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-sm font-semibold">
+                </div>
+
+                <div class="bg-blue-50/60 dark:bg-blue-950/20 p-4 rounded-2xl border border-blue-200 dark:border-blue-800">
+                    <h3 class="text-xs font-bold text-blue-700 dark:text-blue-300 uppercase tracking-wider mb-2">Base</h3>
+                    <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Concentração C₆ (mol/L):</label>
+                    <input type="number" id="tit-cb" step="any" value="0.1" placeholder="Ex: 0.1" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-sm font-semibold mb-2">
+                    <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Volume V₆ gasto (mL ou L):</label>
+                    <input type="number" id="tit-vb" step="any" value="32.5" placeholder="Ex: 32.5" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-sm font-semibold">
+                </div>
+
+                <div class="bg-slate-50 dark:bg-slate-900/40 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
+                    <h3 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Proporção (a : b)</h3>
+                    <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Coeficiente Ácido (a):</label>
+                    <input type="number" id="tit-pa" value="1" min="1" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-sm font-semibold mb-2">
+                    <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Coeficiente Base (b):</label>
+                    <input type="number" id="tit-pb" value="1" min="1" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-sm font-semibold">
+                </div>
+
+                <div class="flex flex-col justify-end">
+                    <button type="button" id="btn-calc-titulacao" class="w-full py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-lg shadow-emerald-500/25 transition flex items-center justify-center space-x-2">
+                        <i class="fas fa-check-double text-base"></i>
+                        <span>Calcular Titulação</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 4: Concentração -->
+        <div id="tab-concentracao" class="calc-tab-content hidden">
+            <div class="mb-4">
+                <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center">
+                    <i class="fas fa-tint text-sky-600 mr-2"></i> Soluções: Molaridade & Concentração Comum
+                </h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Informe a massa do soluto, sua fórmula e o volume da solução em litros.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+                <div>
+                    <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Fórmula do Soluto:</label>
+                    <input type="text" id="conc-formula" value="NaCl" placeholder="Ex: NaCl, NaOH" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-sm font-semibold">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Massa do Soluto (g):</label>
+                    <input type="number" id="conc-massa" value="58.44" step="any" placeholder="Ex: 58.44" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-sm font-semibold">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Volume da Solução (Litros):</label>
+                    <input type="number" id="conc-volume" value="1.0" step="any" placeholder="Ex: 1.0" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-sm font-semibold">
+                </div>
+            </div>
+
+            <button type="button" id="btn-calc-concentracao" class="py-3 px-6 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-sm shadow-md transition">
+                <i class="fas fa-tint mr-1.5"></i> Calcular Concentrações
+            </button>
+        </div>
+
+    </div>
+
+    <!-- SEÇÃO DE RESULTADOS DETALHADOS -->
+    <div id="results-container" class="hidden space-y-6">
+        
+        <!-- Cartão de Resumo -->
+        <div class="bg-gradient-to-r from-sky-600 to-indigo-700 rounded-3xl p-6 sm:p-8 text-white shadow-2xl relative overflow-hidden">
+            <div class="relative z-10">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/20 pb-4 mb-4">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-sky-200">Resultado do Cálculo</span>
+                        <h3 id="result-main-title" class="text-2xl sm:text-3xl font-black tracking-tight mt-1">Reação Balanceada</h3>
+                    </div>
+                    <div class="self-start sm:self-center px-3 py-1 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-md text-white flex items-center space-x-1.5">
+                        <i class="fas fa-check-circle text-emerald-300"></i>
+                        <span>Estequiometria Verificada</span>
+                    </div>
+                </div>
+                <div id="result-summary-box" class="font-mono text-base sm:text-lg bg-black/20 p-4 rounded-2xl backdrop-blur-sm border border-white/10 break-all leading-relaxed"></div>
+            </div>
+        </div>
+
+        <!-- Grade de Espécies Químicas -->
+        <div id="species-grid-card" class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-200/80 dark:border-slate-700/80 p-5 sm:p-8 overflow-hidden">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center">
+                <i class="fas fa-table text-sky-600 mr-2"></i> Tabela Estequiométrica Completa
+            </h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs sm:text-sm">
+                    <thead>
+                        <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-400 uppercase tracking-wider font-semibold">
+                            <th class="py-3 px-3">Papel</th>
+                            <th class="py-3 px-3">Substância</th>
+                            <th class="py-3 px-3">Coef.</th>
+                            <th class="py-3 px-3">Massa Molar</th>
+                            <th class="py-3 px-3 font-bold text-sky-600 dark:text-sky-400">Quantidade (Mols)</th>
+                            <th class="py-3 px-3 font-bold text-emerald-600 dark:text-emerald-400">Massa (g)</th>
+                            <th class="py-3 px-3">Volume CNTP (L)</th>
+                            <th class="py-3 px-3">Partículas</th>
+                        </tr>
+                    </thead>
+                    <tbody id="species-table-body" class="divide-y divide-slate-100 dark:divide-slate-700/50"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- EXPLICAÇÕES DUPLAS: Objetiva + Para Crianças até 11 anos -->
+        <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-200/80 dark:border-slate-700/80 p-5 sm:p-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-700 gap-3 mb-6">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center">
+                        <i class="fas fa-chalkboard-teacher text-amber-500 mr-2"></i> Como este cálculo foi feito?
+                    </h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Escolha a linguagem mais adequada para o seu aprendizado.</p>
+                </div>
+                
+                <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-700 rounded-2xl self-start sm:self-auto">
+                    <button type="button" id="btn-mode-objective" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-white dark:bg-slate-800 text-slate-800 dark:text-white shadow-sm flex items-center space-x-1.5">
+                        <i class="fas fa-graduation-cap text-sky-600"></i>
+                        <span>Explicação Objetiva</span>
+                    </button>
+                    <button type="button" id="btn-mode-kids" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition text-slate-500 dark:text-slate-300 hover:text-slate-800 dark:hover:text-white flex items-center space-x-1.5">
+                        <i class="fas fa-child text-amber-500"></i>
+                        <span>Para Crianças (até 11 anos)</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="explanation-objective" class="prose dark:prose-invert max-w-none text-xs sm:text-sm leading-relaxed space-y-4 text-slate-700 dark:text-slate-300"></div>
+            <div id="explanation-kids" class="hidden bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/60 rounded-2xl p-5 sm:p-6 text-slate-800 dark:text-slate-200 text-sm leading-relaxed"></div>
+        </div>
+
+    </div>
+
+</main>
+
+<!-- ================= VIEW 2: TABELA PERIÓDICA ================= -->
+<main id="view-tabela" class="app-view hidden flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300 mb-1">
+                <i class="fas fa-th mr-1"></i> Tabela IUPAC Interativa
+            </span>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+                Tabela Periódica dos Elementos
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                Clique sobre qualquer elemento para ver massa atômica, Nox, distribuição eletrônica e inserir na calculadora.
+            </p>
+        </div>
+
+        <div class="w-full md:w-80">
+            <div class="relative">
+                <input type="text" id="demo-elem-search-input" placeholder="Buscar símbolo, nome ou Z (ex: Fe, Ferro, 26)..."
+                       class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs sm:text-sm text-slate-800 dark:text-white focus:ring-2 focus:ring-sky-500 focus:outline-none shadow-sm transition">
+                <i class="fas fa-search absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chips de Categorias -->
+    <div class="mb-6 overflow-x-auto pb-2">
+        <div class="inline-flex flex-wrap gap-1.5 items-center">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mr-1">Famílias:</span>
+            <button type="button" class="demo-cat-btn active px-3 py-1 rounded-xl text-xs font-semibold bg-sky-600 text-white shadow-sm transition" data-cat="all">Todas</button>
+            <button type="button" class="demo-cat-btn px-3 py-1 rounded-xl text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300" data-cat="nao-metal">Não-metais</button>
+            <button type="button" class="demo-cat-btn px-3 py-1 rounded-xl text-xs font-semibold bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-300" data-cat="metal-alcalino">Metais Alcalinos</button>
+            <button type="button" class="demo-cat-btn px-3 py-1 rounded-xl text-xs font-semibold bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300" data-cat="alcalino-terroso">Alcalinoterrosos</button>
+            <button type="button" class="demo-cat-btn px-3 py-1 rounded-xl text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300" data-cat="metal-transicao">Metais de Transição</button>
+            <button type="button" class="demo-cat-btn px-3 py-1 rounded-xl text-xs font-semibold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300" data-cat="metal-pos-transicao">Pós-transição</button>
+            <button type="button" class="demo-cat-btn px-3 py-1 rounded-xl text-xs font-semibold bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-300" data-cat="semimetal">Semimetais</button>
+            <button type="button" class="demo-cat-btn px-3 py-1 rounded-xl text-xs font-semibold bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300" data-cat="halogenio">Halogênios</button>
+            <button type="button" class="demo-cat-btn px-3 py-1 rounded-xl text-xs font-semibold bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300" data-cat="gas-nobre">Gases Nobres</button>
+            <button type="button" class="demo-cat-btn px-3 py-1 rounded-xl text-xs font-semibold bg-cyan-100 text-cyan-800 dark:bg-cyan-900/40 dark:text-cyan-300" data-cat="lantanideo">Lantanídeos</button>
+            <button type="button" class="demo-cat-btn px-3 py-1 rounded-xl text-xs font-semibold bg-pink-100 text-pink-800 dark:bg-pink-900/40 dark:text-pink-300" data-cat="actinideo">Actinídeos</button>
+        </div>
+    </div>
+
+    <!-- Grade da Tabela -->
+    <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-200/80 dark:border-slate-700/80 p-4 sm:p-6 overflow-x-auto">
+        <div class="min-w-[960px]">
+            <div id="demo-main-periodic-grid" class="periodic-table-grid mb-4"></div>
+            <div class="my-4 border-t border-dashed border-slate-200 dark:border-slate-700 pt-3">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Série dos Lantanídeos e Actinídeos (Bloco F)</span>
+                <div id="demo-lanthanides-grid" class="grid grid-cols-15 gap-1 mb-1.5" style="display: grid; grid-template-columns: repeat(15, minmax(44px, 1fr));"></div>
+                <div id="demo-actinides-grid" class="grid grid-cols-15 gap-1" style="display: grid; grid-template-columns: repeat(15, minmax(44px, 1fr));"></div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- ================= VIEW 3: HISTÓRICO ================= -->
+<main id="view-historico" class="app-view hidden flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white flex items-center">
+                <i class="fas fa-history text-sky-600 mr-3"></i> Histórico de Consultas Realizadas
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Visualização do histórico salvo nesta máquina e no banco de dados.
+            </p>
+        </div>
+        <button type="button" id="demo-clear-history" class="px-4 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 border border-rose-300 transition">
+            <i class="fas fa-trash-alt mr-1"></i> Limpar Histórico
+        </button>
+    </div>
+
+    <div id="demo-history-list" class="space-y-3">
+        <!-- Itens inseridos dinamicamente -->
+    </div>
+</main>
+
+<!-- ================= VIEW 4: AUDITORIA / LOGS ================= -->
+<main id="view-auditoria" class="app-view hidden flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300">
+                <i class="fas fa-shield-alt mr-1"></i> Auditoria de Operações
+            </span>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-1">
+                Logs de Auditoria do Sistema
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                Rastreabilidade de alterações e cálculos conforme exigido no requisitos.md.
+            </p>
+        </div>
+    </div>
+
+    <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-200/80 dark:border-slate-700/80 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs sm:text-sm">
+                <thead>
+                    <tr class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 text-slate-400 uppercase tracking-wider font-semibold">
+                        <th class="py-3 px-4">Data / Hora</th>
+                        <th class="py-3 px-4">Ação</th>
+                        <th class="py-3 px-4">Usuário</th>
+                        <th class="py-3 px-4">Detalhes</th>
+                    </tr>
+                </thead>
+                <tbody id="demo-audit-table" class="divide-y divide-slate-100 dark:divide-slate-700/60">
+                    <!-- Gerado dinamicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<!-- Componente de Rodapé Global com Fontes e Referências Confiáveis da Internet -->
+<footer class="mt-auto bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="md:col-span-1 space-y-3">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-lg bg-sky-600 flex items-center justify-center text-white font-bold">
+                        <i class="fas fa-atom"></i>
+                    </div>
+                    <span class="font-extrabold text-lg text-slate-900 dark:text-white">Estequio<span class="text-sky-600">Lab</span></span>
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                    Ferramenta inteligente e acessível voltada para estudantes, professores e profissionais da química.
+                </p>
+            </div>
+
+            <div>
+                <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3">Navegação</h4>
+                <ul class="space-y-2 text-xs text-slate-600 dark:text-slate-300">
+                    <li><button type="button" class="nav-view-btn hover:text-sky-600" data-view="view-calc"><i class="fas fa-angle-right mr-1 opacity-50"></i> Calculadora</button></li>
+                    <li><button type="button" class="nav-view-btn hover:text-sky-600" data-view="view-tabela"><i class="fas fa-angle-right mr-1 opacity-50"></i> Tabela Periódica</button></li>
+                    <li><button type="button" class="nav-view-btn hover:text-sky-600" data-view="view-historico"><i class="fas fa-angle-right mr-1 opacity-50"></i> Histórico</button></li>
+                    <li><button type="button" class="nav-view-btn hover:text-sky-600" data-view="view-auditoria"><i class="fas fa-angle-right mr-1 opacity-50"></i> Auditoria</button></li>
+                </ul>
+            </div>
+
+            <!-- Coluna Fontes da Internet (Requisitos.md) -->
+            <div class="md:col-span-2">
+                <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3 flex items-center">
+                    <i class="fas fa-book-open text-sky-600 mr-2"></i> Fontes & Referências Científicas Consultadas
+                </h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">
+                    Conforme os requisitos do projeto, todas as fórmulas, constantes e massas atômicas seguem normas padronizadas:
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    <a href="https://goldbook.iupac.org/" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-slate-50 dark:bg-slate-700/50 hover:bg-sky-50 text-slate-700 dark:text-slate-200 transition flex items-center space-x-2">
+                        <i class="fas fa-external-link-alt text-sky-500 text-[10px]"></i>
+                        <span><strong>IUPAC Gold Book</strong> - Nomenclatura e Constantes</span>
+                    </a>
+                    <a href="https://www.sbq.org.br/" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-slate-50 dark:bg-slate-700/50 hover:bg-sky-50 text-slate-700 dark:text-slate-200 transition flex items-center space-x-2">
+                        <i class="fas fa-external-link-alt text-sky-500 text-[10px]"></i>
+                        <span><strong>SBQ</strong> - Sociedade Brasileira de Química</span>
+                    </a>
+                    <a href="https://brasilescola.uol.com.br/quimica/calculos-estequiometricos.htm" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-slate-50 dark:bg-slate-700/50 hover:bg-sky-50 text-slate-700 dark:text-slate-200 transition flex items-center space-x-2">
+                        <i class="fas fa-external-link-alt text-sky-500 text-[10px]"></i>
+                        <span><strong>Brasil Escola</strong> - Cálculos Estequiométricos</span>
+                    </a>
+                    <a href="https://pt.khanacademy.org/science/chemistry/chemical-reactions-stoichiome" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-slate-50 dark:bg-slate-700/50 hover:bg-sky-50 text-slate-700 dark:text-slate-200 transition flex items-center space-x-2">
+                        <i class="fas fa-external-link-alt text-sky-500 text-[10px]"></i>
+                        <span><strong>Khan Academy</strong> - Estequiometria Química</span>
+                    </a>
+                    <a href="https://www.todamateria.com.br/estequiometria/" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-slate-50 dark:bg-slate-700/50 hover:bg-sky-50 text-slate-700 dark:text-slate-200 transition flex items-center space-x-2">
+                        <i class="fas fa-external-link-alt text-sky-500 text-[10px]"></i>
+                        <span><strong>Toda Matéria</strong> - Regras de Três & Proporções</span>
+                    </a>
+                    <a href="https://pt.wikipedia.org/wiki/Massa_molar" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-slate-50 dark:bg-slate-700/50 hover:bg-sky-50 text-slate-700 dark:text-slate-200 transition flex items-center space-x-2">
+                        <i class="fas fa-external-link-alt text-sky-500 text-[10px]"></i>
+                        <span><strong>Tabela Periódica Oficial</strong> - Pesos Atômicos IUPAC</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400">
+            <p>&copy; 2026 Calculadora Estequiométrica - Projeto de Química Computacional.</p>
+            <p class="mt-2 sm:mt-0 font-medium text-slate-500 dark:text-slate-400">Mobile-First &bull; Modo Criança &bull; Auditoria de Logs</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Modais e Toasts -->
+<div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col space-y-3 pointer-events-none w-80 max-w-full"></div>
+<template id="toast-template">
+    <div class="toast-item pointer-events-auto flex items-start p-4 rounded-xl shadow-2xl border text-sm transition-all transform duration-300 translate-y-2 opacity-0">
+        <div class="toast-icon flex-shrink-0 mr-3 mt-0.5 text-lg"></div>
+        <div class="flex-1">
+            <h4 class="toast-title font-semibold text-sm"></h4>
+            <p class="toast-message text-xs opacity-90 mt-0.5 leading-relaxed"></p>
+        </div>
+        <button type="button" class="toast-close ml-2 text-current opacity-60 hover:opacity-100 focus:outline-none">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+</template>
+
+<!-- Modal Genérico -->
+<div id="system-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+    <div id="system-modal-card" class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+        <div class="flex items-center space-x-3 mb-4">
+            <div id="system-modal-icon-container" class="w-10 h-10 rounded-full flex items-center justify-center bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300">
+                <i id="system-modal-icon" class="fas fa-info-circle text-lg"></i>
+            </div>
+            <h3 id="system-modal-title" class="text-lg font-bold text-slate-800 dark:text-white">Aviso do Sistema</h3>
+        </div>
+        <div id="system-modal-content" class="text-sm text-slate-600 dark:text-slate-300 mb-6 leading-relaxed"></div>
+        <div class="flex items-center justify-end space-x-3">
+            <button id="system-modal-btn-cancel" type="button" class="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition hidden">Cancelar</button>
+            <button id="system-modal-btn-confirm" type="button" class="px-5 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-md transition">Entendido</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Elemento Químico -->
+<div id="element-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl max-w-lg w-full p-6 sm:p-8 border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300 relative overflow-hidden">
+        <div id="elem-modal-banner" class="absolute top-0 left-0 right-0 h-3 bg-indigo-500"></div>
+        <button id="elem-modal-close" type="button" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 text-lg">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="flex items-center space-x-4 mt-2 mb-6">
+            <div id="elem-modal-box" class="w-20 h-20 rounded-2xl flex flex-col items-center justify-center text-white font-bold shadow-md bg-indigo-600">
+                <span id="elem-modal-atomic-number" class="text-xs font-mono opacity-80">1</span>
+                <span id="elem-modal-symbol" class="text-2xl font-black">H</span>
+                <span id="elem-modal-mass" class="text-[10px] font-mono">1.008</span>
+            </div>
+            <div>
+                <h3 id="elem-modal-name" class="text-2xl font-black text-slate-900 dark:text-white">Hidrogênio</h3>
+                <span id="elem-modal-category" class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300">Não-metal</span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3 text-sm mb-6">
+            <div class="bg-slate-50 dark:bg-slate-700/50 p-3 rounded-xl"><span class="block text-xs text-slate-400 font-semibold uppercase">Grupo</span><span id="elem-modal-group" class="font-bold text-slate-700 dark:text-slate-200">1</span></div>
+            <div class="bg-slate-50 dark:bg-slate-700/50 p-3 rounded-xl"><span class="block text-xs text-slate-400 font-semibold uppercase">Período</span><span id="elem-modal-period" class="font-bold text-slate-700 dark:text-slate-200">1</span></div>
+            <div class="bg-slate-50 dark:bg-slate-700/50 p-3 rounded-xl"><span class="block text-xs text-slate-400 font-semibold uppercase">Eletronegatividade</span><span id="elem-modal-electronegativity" class="font-bold text-slate-700 dark:text-slate-200">2.20</span></div>
+            <div class="bg-slate-50 dark:bg-slate-700/50 p-3 rounded-xl"><span class="block text-xs text-slate-400 font-semibold uppercase">Estado a 25°C</span><span id="elem-modal-state" class="font-bold text-slate-700 dark:text-slate-200">Gasoso</span></div>
+            <div class="bg-slate-50 dark:bg-slate-700/50 p-3 rounded-xl col-span-2"><span class="block text-xs text-slate-400 font-semibold uppercase">Configuração Eletrônica</span><span id="elem-modal-config" class="font-mono text-xs font-semibold text-slate-800 dark:text-slate-200">1s¹</span></div>
+            <div class="bg-slate-50 dark:bg-slate-700/50 p-3 rounded-xl col-span-2"><span class="block text-xs text-slate-400 font-semibold uppercase">Nox Mais Comuns</span><span id="elem-modal-nox" class="font-mono text-xs font-semibold text-slate-800 dark:text-slate-200">+1, -1</span></div>
+        </div>
+        <div class="flex flex-col sm:flex-row items-center gap-3">
+            <button id="elem-modal-btn-insert" type="button" class="w-full sm:flex-1 py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-md transition flex items-center justify-center space-x-2">
+                <i class="fas fa-plus"></i><span>Adicionar à Fórmula</span>
+            </button>
+            <button id="elem-modal-btn-copy" type="button" class="w-full sm:w-auto py-2.5 px-4 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 font-medium text-sm transition flex items-center justify-center space-x-2">
+                <i class="far fa-copy"></i><span>Copiar Símbolo</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="assets/js/periodic-table.js"></script>
+<script src="assets/js/stoichiometry.js"></script>
+<script src="assets/js/app.js"></script>
+
+<script>
+// Script específico da versão Standalone (SPA)
+document.addEventListener("DOMContentLoaded", () => {
+    // Alternância de Views (Calculadora, Tabela Periódica, Histórico, Auditoria)
+    const viewBtns = document.querySelectorAll(".nav-view-btn");
+    const appViews = document.querySelectorAll(".app-view");
+
+    function switchView(targetViewId) {
+        appViews.forEach(v => {
+            if (v.id === targetViewId) {
+                v.classList.remove("hidden");
+            } else {
+                v.classList.add("hidden");
+            }
+        });
+
+        viewBtns.forEach(b => {
+            if (b.getAttribute("data-view") === targetViewId) {
+                b.classList.add("bg-sky-50", "text-sky-700", "dark:bg-sky-900/40", "dark:text-sky-300");
+                b.classList.remove("text-slate-600", "dark:text-slate-300");
+            } else {
+                b.classList.remove("bg-sky-50", "text-sky-700", "dark:bg-sky-900/40", "dark:text-sky-300");
+                b.classList.add("text-slate-600", "dark:text-slate-300");
+            }
+        });
+
+        const mobileMenu = document.getElementById("mobile-menu");
+        if (mobileMenu) mobileMenu.classList.add("hidden");
+
+        if (targetViewId === "view-tabela") renderDemoTable();
+        if (targetViewId === "view-historico") renderDemoHistory();
+        if (targetViewId === "view-auditoria") renderDemoAudit();
+    }
+    window.switchView = switchView;
+
+    viewBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            switchView(btn.getAttribute("data-view"));
+        });
+    });
+
+    const gotoTabelaBtns = document.querySelectorAll(".btn-goto-tabela");
+    gotoTabelaBtns.forEach(b => {
+        b.addEventListener("click", () => switchView("view-tabela"));
+    });
+
+    // Abas da calculadora
+    const tabBtns = document.querySelectorAll(".calc-tab-btn");
+    const tabContents = document.querySelectorAll(".calc-tab-content");
+    tabBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            tabBtns.forEach(b => {
+                b.classList.remove("active", "bg-white", "dark:bg-slate-700", "text-sky-600", "dark:text-sky-300", "shadow-sm");
+                b.classList.add("text-slate-600", "dark:text-slate-300");
+            });
+            btn.classList.add("active", "bg-white", "dark:bg-slate-700", "text-sky-600", "dark:text-sky-300", "shadow-sm");
+            btn.classList.remove("text-slate-600", "dark:text-slate-300");
+
+            const targetId = btn.getAttribute("data-tab");
+            tabContents.forEach(c => {
+                if (c.id === targetId) c.classList.remove("hidden");
+                else c.classList.add("hidden");
+            });
+        });
+    });
+
+    // Exemplos rápidos
+    const sampleBtns = document.querySelectorAll(".quick-sample");
+    const formulaInput = document.getElementById("formula-input");
+    sampleBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            if (formulaInput) {
+                formulaInput.value = btn.getAttribute("data-eq");
+                showToast("info", "Exemplo Carregado", `Reação carregada: ${formulaInput.value}`);
+                updateSpeciesSelector();
+            }
+        });
+    });
+
+    function updateSpeciesSelector() {
+        const sel = document.getElementById("stoich-target-species");
+        if (!sel || !formulaInput) return;
+        try {
+            const eq = formulaInput.value.trim();
+            if (eq.includes("->") || eq.includes("=")) {
+                const b = balanceEquation(eq);
+                sel.innerHTML = "";
+                b.allSpecies.forEach((sp, idx) => {
+                    const opt = document.createElement("option");
+                    opt.value = idx;
+                    opt.text = `${sp.formula} (${idx < b.reactants.length ? 'Reagente' : 'Produto'})`;
+                    sel.appendChild(opt);
+                });
+            }
+        } catch (e) {}
+    }
+    if (formulaInput) {
+        formulaInput.addEventListener("blur", updateSpeciesSelector);
+        updateSpeciesSelector();
+    }
+
+    // Cálculos
+    document.getElementById("btn-calc-stoich").addEventListener("click", () => {
+        const eqStr = formulaInput.value.trim();
+        if (!eqStr) return showToast("warning", "Atenção", "Digite a reação química.");
+        try {
+            const balanced = balanceEquation(eqStr);
+            const speciesIdx = parseInt(document.getElementById("stoich-target-species").value, 10) || 0;
+            const qtyType = document.getElementById("stoich-quantity-type").value;
+            const qtyVal = parseFloat(document.getElementById("stoich-quantity-val").value) || 1;
+            const stoichResult = solveFullStoichiometry(balanced, speciesIdx, qtyType, qtyVal);
+            const explanations = generateExplanations("estequiometria", stoichResult);
+
+            renderResults({
+                title: "Reação Estequiométrica Balanceada",
+                summary: balanced.balancedEquation,
+                type: "estequiometria",
+                formula: eqStr,
+                data: stoichResult,
+                explanations: explanations
+            });
+            recordAudit("CALCULO_REALIZADO", `Estequiometria calculada: ${eqStr}`);
+            showToast("success", "Cálculo Realizado", "Equação balanceada e grandezas computadas!");
+        } catch (err) {
+            showToast("error", "Erro", err.message);
+            customAlert(err.message, "Atenção na Reação Química");
+        }
+    });
+
+    document.getElementById("btn-calc-massa-nox").addEventListener("click", () => {
+        const fStr = document.getElementById("massa-formula-input").value.trim();
+        if (!fStr) return showToast("warning", "Atenção", "Informe a fórmula molecular.");
+        try {
+            const mmData = calculateMolarMass(fStr);
+            const noxData = calculateNox(fStr);
+            const expMM = generateExplanations("massa_molar", mmData);
+            const expNox = generateExplanations("nox", noxData);
+
+            let summary = `Fórmula: ${fStr} | Massa Molar: ${mmData.molarMass.toFixed(3)} g/mol\nNox: `;
+            for (let sym in noxData.noxMap) {
+                const v = noxData.noxMap[sym];
+                summary += `${sym}: ${v > 0 ? '+' + v : v}  `;
+            }
+
+            renderResults({
+                title: `Massa Molar & Nox: ${fStr}`,
+                summary: summary,
+                type: "massa_nox",
+                formula: fStr,
+                molarData: mmData,
+                noxData: noxData,
+                explanations: {
+                    objective: expMM.objective + "\n\n" + expNox.objective,
+                    kids: expMM.kids + "\n\n" + expNox.kids
+                }
+            });
+            recordAudit("CALCULO_REALIZADO", `Massa & Nox calculados para ${fStr}`);
+            showToast("success", "Cálculo Realizado", `Massa Molar: ${mmData.molarMass.toFixed(3)} g/mol`);
+        } catch (err) {
+            showToast("error", "Erro", err.message);
+            customAlert(err.message, "Fórmula Inválida");
+        }
+    });
+
+    document.getElementById("btn-calc-titulacao").addEventListener("click", () => {
+        const va = parseFloat(document.getElementById("tit-va").value) || null;
+        const ca = parseFloat(document.getElementById("tit-ca").value) || null;
+        const vb = parseFloat(document.getElementById("tit-vb").value) || null;
+        const cb = parseFloat(document.getElementById("tit-cb").value) || null;
+        const pa = parseFloat(document.getElementById("tit-pa").value) || 1;
+        const pb = parseFloat(document.getElementById("tit-pb").value) || 1;
+
+        try {
+            const titRes = calculateTitration(va, ca, vb, cb, pa, pb);
+            renderResults({
+                title: `Titulação Ácido-Base: ${titRes.variable}`,
+                summary: `${titRes.variable} = ${titRes.value.toFixed(4)}`,
+                type: "titulacao",
+                formula: `Titulação (a=${pa}, b=${pb})`,
+                explanations: {
+                    objective: `Titulação: ${titRes.variable}\n${titRes.steps.join('\n')}`,
+                    kids: `🧪 Ácido e base se neutralizaram!\nO valor encontrado foi: ${titRes.value.toFixed(4)}`
+                }
+            });
+            recordAudit("CALCULO_REALIZADO", `Titulação calculada: ${titRes.variable}`);
+            showToast("success", "Titulação Calculada", `${titRes.variable}: ${titRes.value.toFixed(4)}`);
+        } catch (err) {
+            showToast("error", "Erro", err.message);
+            customAlert(err.message, "Titulação");
+        }
+    });
+
+    document.getElementById("btn-calc-concentracao").addEventListener("click", () => {
+        const form = document.getElementById("conc-formula").value.trim();
+        const mass = parseFloat(document.getElementById("conc-massa").value);
+        const vol = parseFloat(document.getElementById("conc-volume").value);
+
+        if (!form || isNaN(mass) || isNaN(vol)) return showToast("warning", "Atenção", "Preencha fórmula, massa e volume.");
+        try {
+            const mm = calculateMolarMass(form);
+            const concRes = calculateConcentration(mass, mm.molarMass, vol);
+            renderResults({
+                title: `Concentração da Solução (${form})`,
+                summary: `Molaridade: ${concRes.molarity.toFixed(4)} mol/L | Concentração Comum: ${concRes.commonConcentration.toFixed(4)} g/L`,
+                type: "concentracao",
+                formula: `${mass}g de ${form} em ${vol}L`,
+                explanations: {
+                    objective: `Concentração de ${form}\n• Molaridade: ${concRes.molarity.toFixed(4)} mol/L\n• Concentração Comum: ${concRes.commonConcentration.toFixed(4)} g/L`,
+                    kids: `🧃 Colocamos ${mass}g de ${form} em ${vol}L de água!\nConcentração: ${concRes.molarity.toFixed(4)} mol/L`
+                }
+            });
+            recordAudit("CALCULO_REALIZADO", `Concentração calculada para ${form}`);
+            showToast("success", "Concentração Calculada", `Molaridade: ${concRes.molarity.toFixed(4)} mol/L`);
+        } catch (err) {
+            showToast("error", "Erro", err.message);
+            customAlert(err.message, "Cálculo de Concentração");
+        }
+    });
+
+    function renderResults(payload) {
+        const container = document.getElementById("results-container");
+        container.classList.remove("hidden");
+        document.getElementById("result-main-title").innerText = payload.title;
+        document.getElementById("result-summary-box").innerText = payload.summary;
+
+        const speciesCard = document.getElementById("species-grid-card");
+        const tbody = document.getElementById("species-table-body");
+        tbody.innerHTML = "";
+
+        if (payload.type === "estequiometria" && payload.data) {
+            speciesCard.classList.remove("hidden");
+            payload.data.results.forEach(item => {
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/30 transition";
+                tr.innerHTML = `
+                    <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full text-[11px] font-bold ${item.isReagent ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">${item.isReagent ? 'Reagente' : 'Produto'}</span></td>
+                    <td class="py-3 px-3 font-mono font-bold text-slate-800 dark:text-white">${item.formula}</td>
+                    <td class="py-3 px-3 font-mono">${item.coeff}</td>
+                    <td class="py-3 px-3 font-mono">${item.molarMass.toFixed(3)} g/mol</td>
+                    <td class="py-3 px-3 font-mono font-bold text-sky-600 dark:text-sky-400">${item.moles.toFixed(4)} mol</td>
+                    <td class="py-3 px-3 font-mono font-bold text-emerald-600 dark:text-emerald-400">${item.mass.toFixed(4)} g</td>
+                    <td class="py-3 px-3 font-mono">${item.volume.toFixed(3)} L</td>
+                    <td class="py-3 px-3 font-mono text-[11px]">${item.particles.toExponential(4)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } else {
+            speciesCard.classList.add("hidden");
+        }
+
+        const objBox = document.getElementById("explanation-objective");
+        const kidsBox = document.getElementById("explanation-kids");
+        objBox.innerHTML = payload.explanations.objective.replace(/\n/g, '<br>');
+        kidsBox.innerHTML = payload.explanations.kids.replace(/\n/g, '<br>');
+
+        // Salva histórico local
+        saveLocalHistory(payload);
+        container.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    // Alternador Explicação
+    document.getElementById("btn-mode-objective").addEventListener("click", () => {
+        document.getElementById("btn-mode-objective").classList.add("bg-white", "dark:bg-slate-800", "text-slate-800", "dark:text-white", "shadow-sm");
+        document.getElementById("btn-mode-kids").classList.remove("bg-white", "dark:bg-slate-800", "text-slate-800", "dark:text-white", "shadow-sm");
+        document.getElementById("explanation-objective").classList.remove("hidden");
+        document.getElementById("explanation-kids").classList.add("hidden");
+    });
+
+    document.getElementById("btn-mode-kids").addEventListener("click", () => {
+        document.getElementById("btn-mode-kids").classList.add("bg-white", "dark:bg-slate-800", "text-slate-800", "dark:text-white", "shadow-sm");
+        document.getElementById("btn-mode-objective").classList.remove("bg-white", "dark:bg-slate-800", "text-slate-800", "dark:text-white", "shadow-sm");
+        document.getElementById("explanation-kids").classList.remove("hidden");
+        document.getElementById("explanation-objective").classList.add("hidden");
+        showToast("info", "Modo Criança", "Explicação ilustrada para crianças até 11 anos! 🎈");
+    });
+
+    // Tabela Periódica Demo
+    let demoFilter = "all";
+    let demoSearch = "";
+    function renderDemoTable() {
+        const mg = document.getElementById("demo-main-periodic-grid");
+        const lg = document.getElementById("demo-lanthanides-grid");
+        const ag = document.getElementById("demo-actinides-grid");
+        mg.innerHTML = ""; lg.innerHTML = ""; ag.innerHTML = "";
+
+        const matrix = Array(7).fill(null).map(() => Array(18).fill(null));
+        ELEMENTS_DATA.forEach(elem => {
+            if (elem.z >= 58 && elem.z <= 71) lg.appendChild(createDemoCell(elem));
+            else if (elem.z >= 90 && elem.z <= 103) ag.appendChild(createDemoCell(elem));
+            else if (elem.p && elem.g) matrix[elem.p - 1][elem.g - 1] = elem;
+        });
+
+        for (let r = 0; r < 7; r++) {
+            for (let c = 0; c < 18; c++) {
+                const elem = matrix[r][c];
+                if (elem) mg.appendChild(createDemoCell(elem));
+                else if (r === 5 && c === 2) {
+                    const p = document.createElement("div");
+                    p.className = "element-cell flex flex-col items-center justify-center p-1 rounded-xl border border-dashed border-cyan-400 bg-cyan-50/50 text-cyan-700 text-[10px] font-bold";
+                    p.innerHTML = "57-71<br>La-Lu";
+                    mg.appendChild(p);
+                } else if (r === 6 && c === 2) {
+                    const p = document.createElement("div");
+                    p.className = "element-cell flex flex-col items-center justify-center p-1 rounded-xl border border-dashed border-pink-400 bg-pink-50/50 text-pink-700 text-[10px] font-bold";
+                    p.innerHTML = "89-103<br>Ac-Lr";
+                    mg.appendChild(p);
+                } else {
+                    const em = document.createElement("div");
+                    em.className = "element-cell invisible";
+                    mg.appendChild(em);
+                }
+            }
+        }
+    }
+
+    function createDemoCell(elem) {
+        const cell = document.createElement("div");
+        const catStyle = CATEGORY_COLORS[elem.c] || { bg: "bg-slate-100 text-slate-800" };
+        let matchesFilter = demoFilter === "all" || elem.c === demoFilter;
+        let matchesSearch = true;
+        if (demoSearch) {
+            const q = demoSearch.toLowerCase();
+            matchesSearch = elem.s.toLowerCase().includes(q) || elem.n.toLowerCase().includes(q) || String(elem.z) === q;
+        }
+        const isDim = !matchesFilter || !matchesSearch;
+        cell.className = `element-cell cursor-pointer flex flex-col justify-between p-1.5 rounded-xl border text-center transition-all ${catStyle.bg} ${isDim ? 'opacity-20 grayscale pointer-events-none' : 'opacity-100 hover:shadow-lg'}`;
+        cell.innerHTML = `
+            <div class="flex justify-between items-center text-[9px] font-mono opacity-70 leading-none">
+                <span>${elem.z}</span><span class="hidden sm:inline text-[8px]">${elem.m.toFixed(1)}</span>
+            </div>
+            <div class="text-sm font-black tracking-tight leading-none my-0.5">${elem.s}</div>
+            <div class="text-[9px] truncate opacity-90 leading-none font-medium hidden sm:block">${elem.n}</div>
+        `;
+        cell.addEventListener("click", () => showElementDetails(elem));
+        // Drag & drop support: arraste o elemento para o campo de fórmula
+        cell.setAttribute("draggable", "true");
+        cell.addEventListener("dragstart", (e) => {
+            e.dataTransfer.setData("text/plain", elem.s);
+            e.dataTransfer.effectAllowed = "copy";
+        });
+        return cell;
+    }
+
+    const demoCatBtns = document.querySelectorAll(".demo-cat-btn");
+    demoCatBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            demoCatBtns.forEach(b => b.classList.remove("active", "bg-sky-600", "text-white"));
+            btn.classList.add("active", "bg-sky-600", "text-white");
+            demoFilter = btn.getAttribute("data-cat");
+            renderDemoTable();
+        });
+    });
+
+    const demoSearchIn = document.getElementById("demo-elem-search-input");
+    if (demoSearchIn) {
+        demoSearchIn.addEventListener("input", (e) => {
+            demoSearch = e.target.value.trim();
+            renderDemoTable();
+        });
+    }
+
+    // Histórico e Auditoria
+    function saveLocalHistory(payload) {
+        const hist = JSON.parse(localStorage.getItem("local_history") || "[]");
+        hist.unshift({
+            tipo: payload.type,
+            formula: payload.formula,
+            summary: payload.summary,
+            date: new Date().toLocaleString("pt-BR")
+        });
+        localStorage.setItem("local_history", JSON.stringify(hist.slice(0, 50)));
+    }
+
+    function recordAudit(action, details) {
+        const logs = JSON.parse(localStorage.getItem("demo_audit_logs") || "[]");
+        logs.unshift({
+            date: new Date().toLocaleString("pt-BR"),
+            action: action,
+            user: "Gustavo Sousa (Aluno)",
+            details: details
+        });
+        localStorage.setItem("demo_audit_logs", JSON.stringify(logs.slice(0, 100)));
+    }
+
+    function renderDemoHistory() {
+        const list = document.getElementById("demo-history-list");
+        const hist = JSON.parse(localStorage.getItem("local_history") || "[]");
+        list.innerHTML = "";
+        if (hist.length === 0) {
+            list.innerHTML = `<div class="p-8 text-center text-slate-400 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">Nenhum cálculo registrado ainda. Realize uma operação na aba Calculadora!</div>`;
+            return;
+        }
+        hist.forEach((item, idx) => {
+            const d = document.createElement("div");
+            d.className = "bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex justify-between items-center";
+            d.innerHTML = `
+                <div>
+                    <div class="flex items-center space-x-2 mb-1">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 text-sky-800 uppercase">${item.tipo}</span>
+                        <span class="text-xs text-slate-400">${item.date}</span>
+                    </div>
+                    <div class="font-mono font-bold text-slate-800 dark:text-white">${item.formula}</div>
+                    <div class="text-xs font-mono text-slate-500">${item.summary}</div>
+                </div>
+            `;
+            list.appendChild(d);
+        });
+    }
+
+    document.getElementById("demo-clear-history").addEventListener("click", () => {
+        customConfirm("Deseja realmente limpar todo o histórico?", () => {
+            localStorage.removeItem("local_history");
+            renderDemoHistory();
+            recordAudit("LIMPEZA_HISTORICO", "Histórico de cálculos foi limpo pelo usuário.");
+            showToast("info", "Histórico Limpo", "Todos os registros foram excluídos.");
+        });
+    });
+
+    function renderDemoAudit() {
+        const tbody = document.getElementById("demo-audit-table");
+        const logs = JSON.parse(localStorage.getItem("demo_audit_logs") || "[]");
+        tbody.innerHTML = "";
+        if (logs.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-400">Nenhum log de auditoria registrado ainda.</td></tr>`;
+            return;
+        }
+        logs.forEach(l => {
+            const tr = document.createElement("tr");
+            tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/30 transition";
+            tr.innerHTML = `
+                <td class="py-3 px-4 font-mono text-xs text-slate-500">${l.date}</td>
+                <td class="py-3 px-4"><span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">${l.action}</span></td>
+                <td class="py-3 px-4 font-semibold text-slate-800 dark:text-white">${l.user}</td>
+                <td class="py-3 px-4 text-xs font-mono text-slate-600 dark:text-slate-300">${l.details}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Registra abertura inicial
+    recordAudit("SISTEMA_INICIADO", "Aplicação EstequioLab carregada com sucesso.");
+});
+</script>
+
+</body>
+</html>

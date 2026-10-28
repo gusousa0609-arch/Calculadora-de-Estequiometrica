@@ -1,0 +1,54 @@
+/* Custom CSS EstequioLab */
+
+@keyframes spinSlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+    animation: spinSlow 12s linear infinite;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(150, 150, 150, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(150, 150, 150, 0.3);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(150, 150, 150, 0.5);
+}
+
+/* Grid da Tabela Periódica */
+.periodic-table-grid {
+    display: grid;
+    grid-template-columns: repeat(18, minmax(44px, 1fr));
+    gap: 4px;
+}
+
+@media (max-width: 768px) {
+    .periodic-table-grid {
+        grid-template-columns: repeat(18, minmax(36px, 1fr));
+        gap: 2px;
+    }
+}
+
+.element-cell {
+    aspect-ratio: 1 / 1;
+    transition: all 0.15s ease-in-out;
+}
+
+.element-cell:hover {
+    transform: translateY(-2px) scale(1.08);
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
